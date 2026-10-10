@@ -617,6 +617,11 @@ public:
 		// constructors
 		Iterator() = default;
 		Iterator(Glyph* g) : glyph(g) {}
+		Iterator(Glyph* g, Glyph* start) : glyph(g), lineStart(start) {}
+
+		// codepoint before the iterator on the same line (only call previous() if hasPrevious() is true)
+		inline bool hasPrevious() const { return lineStart && glyph > lineStart; }
+		inline ImWchar previous() const { return (glyph - 1)->codepoint; }
 
 		using iterator_category = std::forward_iterator_tag;
 		using difference_type = std::ptrdiff_t;
@@ -639,6 +644,7 @@ public:
 	private:
 		// properties
 		Glyph* glyph;
+		Glyph* lineStart = nullptr;
 	};
 
 	// language support
@@ -661,6 +667,9 @@ public:
 		// the start and end character sequence for multiline comments (can be blank language doesn't have this feature)
 		std::string commentStart;
 		std::string commentEnd;
+
+		// flag to specify whether multiline comments can be nested (up to 8 levels, can't be combined with commentLevelStart/End)
+		bool nestedComments = false;
 
 		// functions to help tokenize multilevel, multiline comments (can be nullptr if language doesn't have this feature)
 		// start and end refer to the characters being tokenized
@@ -727,6 +736,7 @@ public:
 		static const Language* AngelScript();
 		static const Language* Lua();
 		static const Language* Python();
+		static const Language* Julia();
 		static const Language* Glsl();
 		static const Language* Hlsl();
 		static const Language* Json();
