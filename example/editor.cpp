@@ -692,8 +692,9 @@ void Editor::showDiff() {
 
 void Editor::showFileOpen() {
 	// open a file selector dialog
-	FileSelector::Instance().OpenFile();
-	state = State::openFile;
+	if (FileSelector::Instance().OpenFile()) {
+		state = State::openFile;
+	}
 }
 
 
@@ -702,8 +703,9 @@ void Editor::showFileOpen() {
 //
 
 void Editor::showSaveFileAs() {
-	FileSelector::Instance().SaveAs();
-	state = State::saveFileAs;
+	if (FileSelector::Instance().SaveAs()) {
+		state = State::saveFileAs;
+	}
 }
 
 
