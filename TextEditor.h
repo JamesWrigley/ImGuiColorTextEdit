@@ -278,9 +278,9 @@ public:
 	// as a result, SetCursor or ScrollToLine just mark the request and let Render execute it
 	//
 	// the order of the calls is therefore important as they can interfere with each other
-	// so if you call SetText, SetCursor and/or ScrollToLine before Render, the order should be:
+	// so if you call any API that changes the text, SetCursor and/or ScrollToLine before Render, the order should be:
 	//
-	// * call SetText first as it resets the entire editor state including cursors and scrolling
+	// * call text changing APIs first as they update the editor state including cursors and scrolling
 	// * then call SetCursor as it sets the cursor and requests that we make the cursor visible (i.e. scroll to it)
 	// * then call ScrollToLine to mark the exact scroll location (it cancels the possible SetCursor scroll request)
 	// * call Render to properly update the entire state
@@ -288,6 +288,7 @@ public:
 	// this works while opening the editor for the first time as well as later
 
 	// get glyph size in pixels
+	// (width is for single width glyphs, double width glyphs are twice as wide)
 	inline float GetLineHeight() const { return glyphSize.y; }
 	inline float GetGlyphWidth() const { return glyphSize.x; }
 
@@ -306,8 +307,10 @@ public:
 	inline bool IsVisPosOverGlyph(VisPos pos) const { return typeSetter.isVisPosOverGlyph(normalizePos(pos)); }
 
 	// find start or end of word from provided position
-	inline DocPos FindWordStart(DocPos pos, bool wholeWord=false) const { return document.findWordStart(normalizePos(pos), wholeWord); }
-	inline DocPos FindWordEnd(DocPos pos, bool wholeWord=false) const { return document.findWordEnd(normalizePos(pos), wholeWord); }
+	// if wordOnly = true, it only looks for sequences of glyphs that can make up words/symbols (letter and numbers)
+	// if wordOnly = false, it also recognizes whitespace sequences or non-word sequences
+	inline DocPos FindWordStart(DocPos pos, bool wordOnly=false) const { return document.findWordStart(normalizePos(pos), wordOnly); }
+	inline DocPos FindWordEnd(DocPos pos, bool wordOnly=false) const { return document.findWordEnd(normalizePos(pos), wordOnly); }
 
 	// find/replace support (strings must be UTF-8 encoded)
 	inline void SelectFirstOccurrenceOf(const std::string_view& text, bool caseSensitive=true, bool wholeWord=false) { selectFirstOccurrenceOf(text, caseSensitive, wholeWord); }
@@ -2062,7 +2065,7 @@ protected:
 	size_t scrollToLineNumber = invalidLine;
 	Scroll scrollToAlignment = Scroll::alignMiddle;
 	float scrollToFraction = 0.0f;
-	DocPos ensureVisiblePos{invalidLine, 0};
+	DocPos scrollToDocPos{invalidLine, 0};
 	bool resetDearImGuiScrolling = false;
 
 	size_t decoratorWidth = 0;
