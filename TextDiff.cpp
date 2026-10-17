@@ -349,7 +349,12 @@ void TextDiff::IntegratedView::renderScrollbar() {
 			&scroll,
 			static_cast<ImS64>(textColumnWidth),
 			static_cast<ImS64>(maxColumnsWidth),
-			ImDrawFlags_RoundCornersAll)) {
+#if IMGUI_VERSION_NUM < 19300
+			ImDrawFlags_RoundCornersAll
+#else
+			ImDrawFlags_RoundAll
+#endif
+			)) {
 
 			textScroll = static_cast<float>(scroll);
 		}
@@ -706,7 +711,12 @@ void TextDiff::SideBySideView::renderScrollbars() {
 			&scroll,
 			static_cast<ImS64>(textColumnWidth),
 			static_cast<ImS64>(maxColumnsWidth),
-			ImDrawFlags_RoundCornersAll)) {
+#if IMGUI_VERSION_NUM < 19300
+			ImDrawFlags_RoundCornersAll
+#else
+			ImDrawFlags_RoundAll
+#endif
+			)) {
 
 			textScroll = static_cast<float>(scroll);
 		}
@@ -718,7 +728,12 @@ void TextDiff::SideBySideView::renderScrollbars() {
 			&scroll,
 			static_cast<ImS64>(textColumnWidth),
 			static_cast<ImS64>(maxColumnsWidth),
-			ImDrawFlags_RoundCornersAll)) {
+#if IMGUI_VERSION_NUM < 19300
+			ImDrawFlags_RoundCornersAll
+#else
+			ImDrawFlags_RoundAll
+#endif
+			)) {
 
 			textScroll = static_cast<float>(scroll);
 		}
