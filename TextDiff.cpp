@@ -342,6 +342,8 @@ void TextDiff::IntegratedView::renderScrollbar() {
 		const ImRect scrollbarFrame(textPos, scrollbarTop, textEnd, scrollbarTop + scrollbarSize);
 		ImS64 scroll = static_cast<ImS64>(textScroll);
 
+		auto corners = ImGui::CalcRoundingFlagsForRectInRect(scrollbarFrame, outerRect, ImGui::GetStyle().WindowBorderSize);
+
 		if (ImGui::ScrollbarEx(
 			scrollbarFrame,
 			ImGui::GetID("textScroll"),
@@ -349,12 +351,7 @@ void TextDiff::IntegratedView::renderScrollbar() {
 			&scroll,
 			static_cast<ImS64>(textColumnWidth),
 			static_cast<ImS64>(maxColumnsWidth),
-#if IMGUI_VERSION_NUM < 19300
-			ImDrawFlags_RoundCornersAll
-#else
-			ImDrawFlags_RoundAll
-#endif
-			)) {
+			corners)) {
 
 			textScroll = static_cast<float>(scroll);
 		}
@@ -704,6 +701,10 @@ void TextDiff::SideBySideView::renderScrollbars() {
 		const ImRect rightScrollbarFrame(rightTextPos, scrollbarTop, rightTextEnd, scrollbarTop + scrollbarSize);
 		ImS64 scroll = static_cast<ImS64>(textScroll);
 
+		auto windowBorderSize = ImGui::GetStyle().WindowBorderSize;
+		auto leftCorners = ImGui::CalcRoundingFlagsForRectInRect(leftScrollbarFrame, outerRect, windowBorderSize);
+		auto rightCorners = ImGui::CalcRoundingFlagsForRectInRect(rightScrollbarFrame, outerRect, windowBorderSize);
+
 		if (ImGui::ScrollbarEx(
 			leftScrollbarFrame,
 			ImGui::GetID("leftTextScroll"),
@@ -711,12 +712,7 @@ void TextDiff::SideBySideView::renderScrollbars() {
 			&scroll,
 			static_cast<ImS64>(textColumnWidth),
 			static_cast<ImS64>(maxColumnsWidth),
-#if IMGUI_VERSION_NUM < 19300
-			ImDrawFlags_RoundCornersAll
-#else
-			ImDrawFlags_RoundAll
-#endif
-			)) {
+			leftCorners)) {
 
 			textScroll = static_cast<float>(scroll);
 		}
@@ -728,12 +724,7 @@ void TextDiff::SideBySideView::renderScrollbars() {
 			&scroll,
 			static_cast<ImS64>(textColumnWidth),
 			static_cast<ImS64>(maxColumnsWidth),
-#if IMGUI_VERSION_NUM < 19300
-			ImDrawFlags_RoundCornersAll
-#else
-			ImDrawFlags_RoundAll
-#endif
-			)) {
+			rightCorners)) {
 
 			textScroll = static_cast<float>(scroll);
 		}
